@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "YT Live Clipper",
+    "slug": "youtube-clip-mvp",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.rudra.ytclipmvp",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VIDEO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow YT Live Clipper to save clips to your gallery.",
+          "savePhotosPermission": "Allow YT Live Clipper to save clips to your gallery."
+        }
+      ]
+    ]
+  }
+}
