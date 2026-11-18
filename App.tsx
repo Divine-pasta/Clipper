@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, SafeAreaView, Alert, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   const [channelUrl, setChannelUrl] = useState('');
@@ -9,26 +11,32 @@ export default function App() {
   const [messageCount, setMessageCount] = useState(0);
   const [spikeCount, setSpikeCount] = useState(0);
 
+  // Request storage permissions on mount
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission Required', 'Grant media library permissions to save clips directly to your gallery.');
+        }
+      }
+    })();
+  }, []);
+
   // Simulate incoming chat stream & velocity check when monitoring is active
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isMonitoring) {
-      interval = setInterval(() => {
-        // Simulate random incoming chat messages (velocity)
+      interval = setInterval(async () => {
+        // Simulate random incoming chat messages (velocity spike test)
         const incomingMessages = Math.floor(Math.random() * 8) + 1; 
-        setMessageCount((prev) => {
-          const updated = prev + incomingMessages;
-          return updated;
-        });
+        setMessageCount((prev) => prev + incomingMessages);
 
-        // Detect velocity spike (e.g. if jump is high)
+        // Detect velocity spike
         if (incomingMessages > 6) {
           setSpikeCount((prev) => {
             const newSpikes = prev + 1;
-            setLogs((logList) => [
-              `[${new Date().toLocaleTimeString()}] 🚀 SPIKE DETECTED! Chat velocity surged. Saving 30s clip #${newSpikes}...`,
-              ...logList,
-            ]);
+            handleClipCapture(newSpikes);
             return newSpikes;
           });
         }
@@ -36,6 +44,35 @@ export default function App() {
     }
     return () => clearInterval(interval);
   }, [isMonitoring]);
+
+  const handleClipCapture = async (spikeNum: number) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setLogs((logList) => [
+      `[${timestamp}] 🚀 SPIKE DETECTED! Chat velocity surged. Saving 30s clip #${spikeNum}...`,
+      ...logList,
+    ]);
+
+    try {
+      // In a full implementation, you'd write your stream buffer chunk here.
+      // For this MVP file handler, we create a placeholder text/log record file to simulate local storage saving.
+      const fileUri = `${FileSystem.documentDirectory}clipper_clip_${Date.now()}.txt`;
+      await FileSystem.writeAsStringAsync(fileUri, `Clipper Auto-Clip Log #${spikeNum} captured at ${new Date().toISOString()}`);
+
+      if (Platform.OS !== 'web') {
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+        await MediaLibrary.createAlbumAsync('ClipperSpikes', asset, false);
+        setLogs((logList) => [
+          `[${timestamp}] ✅ Clip #${spikeNum} successfully saved to gallery (ClipperSpikes album)!`,
+          ...logList,
+        ]);
+      }
+    } catch (error) {
+      setLogs((logList) => [
+        `[${timestamp}] ⚠️ Failed to save clip file: ${error}`,
+        ...logList,
+      ]);
+    }
+  };
 
   const startMonitoring = () => {
     if (!channelUrl.trim()) {
