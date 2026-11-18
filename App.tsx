@@ -5,7 +5,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 
 // Replace with your PC's local IP (e.g., http://192.168.1.10:3000) or cloud server URL
-const SERVER_URL = 'https://expert-couscous-wv4q9q75jpgx3gxj5-3000.app.github.dev/poll';
+const SERVER_URL = 'https://shrfg.onrender.com';
 
 export default function App() {
   const [streamUrl, setStreamUrl] = useState('');
