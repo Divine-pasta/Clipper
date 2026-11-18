@@ -25,6 +25,7 @@ export default function App() {
     })();
   }, []);
 
+  // Polling loop to check server status and chat spikes every 3 seconds
   useEffect(() => {
     let interval: any;
     if (isMonitoring) {
@@ -33,12 +34,15 @@ export default function App() {
           const response = await fetch(`${SERVER_URL}/poll`);
           const data = await response.json();
 
-          setMessageCount((prev) => prev + (data.messages || 0));
+          // Update message count based on sliding window activity from backend
+          if (data.messagesLast4s !== undefined) {
+            setMessageCount(data.messagesLast4s);
+          }
 
           if (data.spikeDetected) {
             setSpikeCount((prev) => prev + 1);
             setLogs((prev) => [
-              `[${new Date().toLocaleTimeString()}] 🚀 SPIKE DETECTED (${data.messages} msgs)! Clipping last 30s...`,
+              `[${new Date().toLocaleTimeString()}] 🚀 SPIKE DETECTED! Clipping last 30s...`,
               ...prev,
             ]);
           }
@@ -152,7 +156,7 @@ export default function App() {
         {isMonitoring && (
           <View style={styles.statsCard}>
             <View style={styles.statBox}>
-              <Text style={styles.statLabel}>Messages Seen</Text>
+              <Text style={styles.statLabel}>Messages (Last 4s)</Text>
               <Text style={styles.statValue}>{messageCount}</Text>
             </View>
             <View style={styles.statBox}>
