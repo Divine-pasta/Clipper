@@ -17,7 +17,9 @@
         "CAMERA",
         "RECORD_AUDIO",
         "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE"
+        "READ_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
     "plugins": [
@@ -28,6 +30,11 @@
           "savePhotosPermission": "Allow Clipper to save live stream clips to your gallery."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d16cd0b8-4b04-4727-a221-802062785977"
+      }
+    }
   }
 }
