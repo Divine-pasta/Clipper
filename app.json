@@ -13,6 +13,7 @@
     },
     "android": {
       "package": "com.divinepasta.clipper",
+      "usesCleartextTraffic": true,
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
