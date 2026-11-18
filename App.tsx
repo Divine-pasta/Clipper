@@ -5,7 +5,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 
 // Replace with your PC's local IP (e.g., http://192.168.1.10:3000) or cloud server URL
-const SERVER_URL = 'https://shrfg.onrender.com';
+const SERVER_URL = 'http://192.168.1.40:3000';
 
 export default function App() {
   const [streamUrl, setStreamUrl] = useState('');
