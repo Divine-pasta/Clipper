@@ -26,7 +26,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: any;
     if (isMonitoring) {
       interval = setInterval(async () => {
         try {
